@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <title>Aplicativo</title>
+</head>
+<body>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+    <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <br>
+              <div class="panel panel-info">
+                  <div class="panel-heading">Agenda</div>
+                  <div class="panel-body">
+                    <p>Nome</p>
+                    <input type="text" class="form-control" id="agenda_nome" placeholder="Nome">
+                    <br>
+                    <p>Telefone</p>
+                    <input type="text" class="form-control" id="agenda_telefone" placeholder="Telefone">
+                    <br>
+                    <input type="button" class="btn btn-primary form-control" value="Inserir">
+                </div>
+            </div>
+        </div>  
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead> 
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>João</td>
+                        <td>048-9 999422086</td>
+                        <td>Ações</td>
+                    </tr>
+                </tbody>  
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
