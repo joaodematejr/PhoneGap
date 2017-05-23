@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
@@ -12,50 +14,101 @@
 </head>
 <body>
     <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript">
         app.initialize();
-    </script>
-    <div class="container">
-      <div class="row">
-          <div class="col-md-12">
-              <br>
-              <div class="panel panel-info">
-                  <div class="panel-heading">Agenda</div>
-                  <div class="panel-body">
-                    <p>Nome</p>
-                    <input type="text" class="form-control" id="agenda_nome" placeholder="Nome">
-                    <br>
-                    <p>Telefone</p>
-                    <input type="text" class="form-control" id="agenda_telefone" placeholder="Telefone">
-                    <br>
-                    <input type="button" class="btn btn-primary form-control" value="Inserir">
-                </div>
+        var db = window.openDatabase("Database", "1.0", "agenda", 2000000);
+        db.transaction(createDB, errorDB, successDB);
+        document.addEventListener("deviceready", onDeviceReady, false);
+        
+        function onDeviceReady(){
+            
+            db.transaction(createDB, errorDB, successDB);
+        }
+        function errorDB(err){
+            alert("Erro: "+err);
+        }
+        function successDB(){}
+    //Criar a tabela se a mesma não existir    
+    function createDB(tx){
+        tx.executeSql('CREATE TABLE IF NOT EXISTS agenda (id INTEGER PRIMARY KEY, nome VARCHAR(500), telefone NUM(11) )');            
+    }
+    //Insere informações no banco de dados
+    function agenda_insert()
+    {
+        db.transaction(agenda_insert_db, errorDB, successDB);
+    }
+    function agenda_insert_db(tx){
+        
+        var nome = $("#agenda_nome").val();
+        var telefone = $("#agenda_telefone").val();
+        tx.executeSql('INSERT INTO agenda (nome, telefone) VALUES ("'+ nome +'", "'+ telefone +'")');
+        agenda_view();
+    }
+    function agenda_delete(agenda_id){
+        $("#agenda_id_delete").val(agenda_id);
+        db.transaction(agenda_delete_db, errorDB, successDB);
+    }
+    function agenda_delete_db(tx){
+        
+        var agenda_id_delete = $("#agenda_id_delete").val();
+        
+        tx.executeSql('DELETE FROM agenda WHERE id = '+ agenda_id_delete +' ');
+        agenda_view();
+    }
+    //Efetua a leitura do banco de dados
+    function agenda_view(){
+        db.transaction(agenda_view_db, errorDB, successDB);
+    }
+    function agenda_view_db(tx){
+        tx.executeSql('SELECT * FROM agenda', [], agenda_view_data, errorDB);
+    }
+    function agenda_view_data(tx, results){
+        $("#agenda_listagem").empty();
+        var len = results.rows.length;
+        for (var i=0; i<len; i++){
+            $("#agenda_listagem").append("<tr class='agenda_item_lista'>"+
+                "<td><h3>" + results.rows.item(i).nome + "</h3><h5>" + results.rows.item(i).telefone + "</h5></td>"+
+                "<td><input type='button' class='btn btn-lg btn-danger' value='X' onclick='agenda_delete(" + results.rows.item(i).id + ")'></td>"+
+                "<tr>");
+        }
+    }
+    
+</script>
+<div class="container">
+  <div class="row">
+      <div class="col-md-12">
+          <br>
+          <div class="panel panel-success">
+              <div class="panel-heading">Agenda</div>
+              <div class="panel-body">
+                <p>Nome</p>
+                <input type="text" class="form-control" id="agenda_nome" placeholder="Nome">
+                <br>
+                <p>Telefone</p>
+                <input type="text" class="form-control" id="agenda_telefone" placeholder="Telefone">
+                <br>
+                <input type="button" class="btn btn-success form-control" value="Inserir" onclick="agenda_insert()">
             </div>
-        </div>  
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Telefone</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead> 
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>João</td>
-                        <td>048-9 999422086</td>
-                        <td>Ações</td>
-                    </tr>
-                </tbody>  
-            </table>
         </div>
+    </div>  
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Ações</th>
+                </tr>
+            </thead> 
+            <tbody id="agenda_listagem">
+            </tbody>  
+        </table>
     </div>
+</div>
 </div>
 </body>
 </html>
